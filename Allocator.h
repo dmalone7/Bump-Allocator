@@ -1,7 +1,7 @@
 // ------------------------------
 // projects/allocator/Allocator.h
-// Copyright (C) 2015
-// Glenn P. Downing
+// Copyright (C) 2016
+// David Malone
 // ------------------------------
 
 #ifndef Allocator_h
@@ -70,8 +70,19 @@ class Allocator {
          * <your documentation>
          */
         bool valid () const {
-            // <your code>
-            return true;}
+            int size = N;
+            int sentinel1, sentinel2;
+            int i = 0;
+            while (size > 0) {
+                sentinel1 = *reinterpret_cast<const int*>(&a[i]);
+                i = sentinel1/sizeof(T) + sizeof(int)/sizeof(T);
+                sentinel2 = *reinterpret_cast<const int*>(&a[i]); 
+                if(sentinel1 != sentinel2) 
+                    return false;
+                size -= (sentinel1 + 2 * sizeof(int));
+            }
+            return true;
+        }
 
         /**
          * O(1) in space
@@ -80,6 +91,7 @@ class Allocator {
          * https://code.google.com/p/googletest/wiki/AdvancedGuide#Private_Class_Members
          */
         FRIEND_TEST(TestAllocator2, index);
+        FRIEND_TEST(TestAllocator2, double_index);
         int& operator [] (int i) {
             return *reinterpret_cast<int*>(&a[i]);}
 
@@ -94,9 +106,20 @@ class Allocator {
          * throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int))
          */
         Allocator () {
-            (*this)[0] = 0; // replace!
-            // <your code>
-            assert(valid());}
+            int ndx, sentinel1, sentinel2;
+            if (N < sizeof(T) + (2 * sizeof(int)))
+                throw std::bad_alloc();
+
+            ndx = 0;
+            sentinel1 = N - (2 * sizeof(int));
+            *reinterpret_cast<int*>(&a[ndx]) = sentinel1;
+
+            ndx = N / sizeof(T) - 1;
+            sentinel2 = sentinel1;
+            *reinterpret_cast<int*>(&a[ndx]) = sentinel2;
+
+            assert(valid());
+        }
 
         // Default copy, destructor, and copy assignment
         // Allocator  (const Allocator&);
@@ -116,9 +139,45 @@ class Allocator {
          * throw a bad_alloc exception, if n is invalid
          */
         pointer allocate (size_type n) {
-            // <your code>
+            int size = N;
+            int sentinel1 = 0;
+            int sentinel2 = 0;
+            int i = 0;
+
+            // error checking 
+            if (n < 1)
+                throw std::bad_alloc();
+
+            // while not at end
+            while (size > 0) {
+                // check first sentinel
+                // if negative, go to second sentinel
+                sentinel1 = *reinterpret_cast<int*>(&a[i]);
+
+                // if (sizeof(T) + (2*sizeof(int)) < sentinel1)
+                //     return nullptr;
+
+                if (sentinel1 > 0 && sentinel1 > (sizeof(T) * n + (2 * sizeof(int)))) {
+                    return reinterpret_cast<T*>(&a[i]);
+                }
+                    // repeat until positive sentinel found
+                // check first sentinel
+                // if less than n, go to second sentinel
+                    // repeat until sentinel is greater than n
+                // create two new sentinels
+                // store old sentinel in temp
+                // new sentinel1 = n
+                // jump forward sentinel1 + sizeof(int)
+                // new sentinel2 = new sentinel1
+                // jump forward 1;
+                // create new sentinel
+                // new sentinel1 = temp - n - n - 2*sizeof(int)
+                // jump forward sentinel1 + sizeof(int)
+                // sentinel2 = sentinel1
+            }
             assert(valid());
-            return nullptr;}             // replace!
+            // return nullptr;
+        }             // replace!
 
         // ---------
         // construct
