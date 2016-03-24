@@ -70,20 +70,33 @@ class Allocator {
      * <your documentation>
      */
     bool valid () const {
-      int size = N;
-      int sentinel1, sentinel2;
-      int i = 0;
-      while (size > 0) {
-        sentinel1 = *reinterpret_cast<const int*>(&a[i]);
-        i = sentinel1/sizeof(T) + sizeof(int)/sizeof(T);
-        sentinel2 = *reinterpret_cast<const int*>(&a[i]); 
+      // uint b = 0, e;
+      // while (b < N) {
+      //   int v = *((int *)&a[b]);
 
-        if(sentinel1 != sentinel2) 
-          return false;
+      //   e = b + sizeof(int) + (v < 0 ? -v : v);
+      //   if (e >= N) return false;
 
-        size -= (sentinel1 + 2 * sizeof(int));
+      //   if (v != *((int *)&a[e])) return false;
+
+      //   b = e + sizeof(int);
+      // }
+      // return true;
+      int i, s1, s2;
+      i = 0;
+      s1 = 0;
+      s2 = 1;
+
+      while (s1 != s2) {
+        s1 = *((int *)&a[i]);
+        i = abs(s1) + sizeof(int);
+        s2 = *((int *)&a[i]);
       }
-      return true;
+
+      if (s1 == s2)
+        return true;
+
+      return false;
     }
 
     /**
@@ -98,6 +111,11 @@ class Allocator {
       return *reinterpret_cast<int*>(&a[i]);
     }
 
+    int abs(int num) const {
+      int mask = (num >> 31);
+      return (num ^ mask) - mask;
+    }
+
   public:
     // ------------
     // constructors
@@ -109,17 +127,24 @@ class Allocator {
      * throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int))
      */
     Allocator () {
+      // if (N < sizeof(int) * 2) {
+      //   throw std::bad_alloc();
+      // }
+      // *((int *)&a[0]) = N - sizeof(int) * 2;
+      // *((int *)&a[N - sizeof(int)]) = *((int *)&a[0]);
+      // assert(valid());
+
       if (N < sizeof(T) + (2 * sizeof(int)))
         throw std::bad_alloc();
 
       int i = 0;
       int sentinel = N - (2 * sizeof(int));
-      *reinterpret_cast<int*>(&a[i]) = sentinel;
+      *((int*)&a[i]) = sentinel;
 
-      i = N - sizeof(T);
-      *reinterpret_cast<int*>(&a[i]) = sentinel;
+      i = N - sizeof(int);
+      *((int*)&a[i]) = sentinel;
 
-      // assert(valid());
+      assert(valid());
     }
 
     // Default copy, destructor, and copy assignment
@@ -131,7 +156,7 @@ class Allocator {
     // allocate
     // --------
 
-    /**
+    /**make 
      * O(1) in space
      * O(n) in time
      * after allocation there must be enough space left for a valid block
@@ -140,43 +165,64 @@ class Allocator {
      * throw a bad_alloc exception, if n is invalid
      */
     pointer allocate (size_type n) {
-      // int size = N;
-      int sentinel = 0;
-      int i = 0;
-      pointer p;
-
-      // error checking 
       if (n < 1)
         throw std::bad_alloc();
 
-      while (i < N-1) {
-        p = (pointer)&a[i];
+      pointer p = nullptr;
+      int sentinel = 0;
+      int i = 0;
+
+      while (i < N) {
         sentinel = *((int*)&a[i]);
 
-        if (sentinel > 0 && sentinel > ((n * sizeof(T)) + (2 * sizeof(int))))
+        if (sentinel > 0 && sentinel > ((n * sizeof(T)) + (2 * sizeof(int)))) {
+          p = (pointer)&a[i];
           break;
-
-        i = sentinel * -1 + 2 * sizeof(int);
+        }
+        i = abs(sentinel) + (2 * sizeof(int));
       }
-      int size = sentinel;
 
-      sentinel = 0-(n * sizeof(T) + 2 * sizeof(int));
+      int old_sentinel = sentinel;
 
-      *((int*)&a[i]) = 0-sentinel;
-      i = sentinel + sizeof(int);
+      sentinel = (n * sizeof(T));
       *((int*)&a[i]) = 0-sentinel;
 
-      sentinel = size - sentinel;
+      i += sentinel + sizeof(int);
+      *((int *)&a[i]) = 0-sentinel;
 
       i += sizeof(int);
-      *((int*)&a[i]) = 0-sentinel;
-      i = sentinel + sizeof(int);
-      *((int*)&a[i]) = 0-sentinel;
+      sentinel = old_sentinel - (sentinel + 2 * sizeof(int));
+      *((int *)&a[i]) = sentinel;
 
+      i = sentinel + sizeof(int);
+      *((int *)&a[i]) = sentinel;
+
+      assert(valid());
       return p;
 
       // assert(valid());
-      // return nullptr;
+      // int size = n * sizeof(T);
+      // uint b = 0, e;
+      // while (b < N) {
+      //   int v = view(b);
+      //   e = b + sizeof(int) + (v < 0 ? -v : v);
+      //   if (v >= size) {
+      //     if (v - size < min_block()) {
+      //       size = v;
+      //     }
+      //     view(b) = -(size);
+      //     view(b + size + sizeof(int)) = view(b);
+
+      //     if ((b + size + sizeof(int)) != e) {
+      //       int diff = v - size - 2 * sizeof(int);
+      //       view(b + size + sizeof(int) * 2) = diff;
+      //       view(e) = diff;
+      //     }
+      //     return reinterpret_cast<pointer>(&a[b + sizeof(int)]);
+      //   }
+      //   b = e + sizeof(int);
+      // }
+      // throw std::bad_alloc();  
     }
 
     // ---------
@@ -189,7 +235,7 @@ class Allocator {
      */
     void construct (pointer p, const_reference v) {
       new (p) T(v);                               // this is correct and exempt
-      // assert(valid());
+      assert(valid());
     }                           // from the prohibition of new
 
     // ----------
@@ -205,8 +251,8 @@ class Allocator {
      */
     void deallocate (pointer p, size_type) {
       // <your code>
-      size_type i = *p;
-      // assert(valid());
+      // size_type i = *p;
+      assert(valid());
     }
 
     // -------
@@ -219,7 +265,7 @@ class Allocator {
      */
     void destroy (pointer p) {
       p->~T();               // this is correct
-      // assert(valid());
+      assert(valid());
     }
 
     /**

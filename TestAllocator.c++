@@ -95,12 +95,30 @@ TEST(TestAllocator2, const_index) {
 
 TEST(TestAllocator2, index) {
     Allocator<int, 100> x;
+    int *p;
+
     ASSERT_EQ(x[0], 92);
+    p = x.allocate(1);
+    ASSERT_EQ(p, (int *)&x[0]);
+    ASSERT_EQ(x[0], -4);
 }
 
 TEST(TestAllocator2, double_index) {
     Allocator<double, 200> x;
+    double *p;
+
     ASSERT_EQ(x[0], 192);
+    p = x.allocate(1);
+    ASSERT_EQ(x[0], -8);
+    ASSERT_EQ(p, (double *)&x[0]);
+    ASSERT_EQ(x[12], -8);
+    ASSERT_EQ(x[16], 176);
+    p = x.allocate(1);
+    ASSERT_EQ(p, (double *)&x[16]);
+    ASSERT_EQ(x[0], -8);
+    ASSERT_EQ(x[12], -8);
+    ASSERT_EQ(x[16], -8);
+    ASSERT_EQ(x[28], -8);
 }
 
 // --------------
