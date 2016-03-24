@@ -96,13 +96,11 @@ TEST(TestAllocator2, const_index) {
 TEST(TestAllocator2, index) {
     Allocator<int, 100> x;
     ASSERT_EQ(x[0], 92);
-    ASSERT_EQ(x[24], 92);
 }
 
 TEST(TestAllocator2, double_index) {
     Allocator<double, 200> x;
     ASSERT_EQ(x[0], 192);
-    ASSERT_EQ(x[24], 192);
 }
 
 // --------------
