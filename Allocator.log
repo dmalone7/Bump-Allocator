@@ -1,0 +1,23 @@
+commit bb47871ad606f6cc8604c38cbc8238618df09426
+Author: David <dmalone7@users.noreply.github.com>
+Date:   Sun Mar 20 23:00:39 2016 -0500
+
+    added changes to constructor
+
+commit 5b7a01940797a6c51f998c361bc00ce65926aaf6
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Tue Mar 8 16:40:16 2016 -0600
+
+    copied files from public allocator repository
+
+commit 8d6b4a1e28ed523173b95566a9dd79b8b2c1bf1e
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Mon Mar 7 12:16:54 2016 -0600
+
+    added .gitignore to dev
+
+commit c73e5602a28faf19d2cd6f778eafe26cdc583cd9
+Author: dmalone7 <maloned101@utexas.edu>
+Date:   Mon Mar 7 12:08:31 2016 -0600
+
+    Initial commit

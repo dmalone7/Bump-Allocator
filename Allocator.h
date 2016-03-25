@@ -59,7 +59,7 @@ class Allocator {
     // ----
 
     char a[N];
-
+    int smallest_block;
     // -----
     // valid
     // -----
@@ -70,27 +70,17 @@ class Allocator {
      * <your documentation>
      */
     bool valid () const {
-      // uint b = 0, e;
-      // while (b < N) {
-      //   int v = *((int *)&a[b]);
-
-      //   e = b + sizeof(int) + (v < 0 ? -v : v);
-      //   if (e >= N) return false;
-
-      //   if (v != *((int *)&a[e])) return false;
-
-      //   b = e + sizeof(int);
-      // }
-      // return true;
       int i, s1, s2;
       i = 0;
-      s1 = 0;
-      s2 = 1;
+      s1 = s2 = 0;
 
-      while (s1 != s2) {
+      while (s1 == s2) {
+        if (i < N) 
+          break;
         s1 = *((int *)&a[i]);
         i = abs(s1) + sizeof(int);
         s2 = *((int *)&a[i]);
+        i += sizeof(int);
       }
 
       if (s1 == s2)
@@ -105,11 +95,11 @@ class Allocator {
      * <your documentation>
      * https://code.google.com/p/googletest/wiki/AdvancedGuide#Private_Class_Members
      */
-    FRIEND_TEST(TestAllocator2, index);
-    FRIEND_TEST(TestAllocator2, double_index);
-    int& operator [] (int i) {
-      return *reinterpret_cast<int*>(&a[i]);
-    }
+    // FRIEND_TEST(TestAllocator2, i);
+    // FRIEND_TEST(TestAllocator2, double_i);
+    // int& operator [] (int i) {
+    //   return *reinterpret_cast<int*>(&a[i]);
+    // }
 
     int abs(int num) const {
       int mask = (num >> 31);
@@ -127,14 +117,8 @@ class Allocator {
      * throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int))
      */
     Allocator () {
-      // if (N < sizeof(int) * 2) {
-      //   throw std::bad_alloc();
-      // }
-      // *((int *)&a[0]) = N - sizeof(int) * 2;
-      // *((int *)&a[N - sizeof(int)]) = *((int *)&a[0]);
-      // assert(valid());
-
-      if (N < sizeof(T) + (2 * sizeof(int)))
+      smallest_block = sizeof(T) + (2 * sizeof(int));
+      if (N < smallest_block)
         throw std::bad_alloc();
 
       int i = 0;
@@ -165,6 +149,8 @@ class Allocator {
      * throw a bad_alloc exception, if n is invalid
      */
     pointer allocate (size_type n) {
+      assert(valid());
+
       if (n < 1)
         throw std::bad_alloc();
 
@@ -175,54 +161,41 @@ class Allocator {
       while (i < N) {
         sentinel = *((int*)&a[i]);
 
-        if (sentinel > 0 && sentinel > ((n * sizeof(T)) + (2 * sizeof(int)))) {
-          p = (pointer)&a[i];
+        if (sentinel > 0 && sentinel >= ((n * sizeof(T)))) {
+          p = (pointer)&a[i + 4];
           break;
         }
-        i = abs(sentinel) + (2 * sizeof(int));
+        i += abs(sentinel) + (2 * sizeof(int));
       }
 
+      if (i >= N)
+        throw std::bad_alloc();
+
       int old_sentinel = sentinel;
+      int *p1 = ((int*)&a[i]);
 
       sentinel = (n * sizeof(T));
       *((int*)&a[i]) = 0-sentinel;
 
       i += sentinel + sizeof(int);
-      *((int *)&a[i]) = 0-sentinel;
+      *((int*)&a[i]) = 0-sentinel;
 
       i += sizeof(int);
+
+      if (i >= N - sizeof(T) - 2 * sizeof(int)) {
+        i = (char*)p1 - &a[0];
+        i += old_sentinel + sizeof(int);
+        *p1 = 0-old_sentinel;
+        *((int*)&a[i]) = 0-old_sentinel;
+        return p;
+      }
+
       sentinel = old_sentinel - (sentinel + 2 * sizeof(int));
       *((int *)&a[i]) = sentinel;
-
-      i = sentinel + sizeof(int);
+      i += sentinel + sizeof(int);
       *((int *)&a[i]) = sentinel;
 
-      assert(valid());
       return p;
-
-      // assert(valid());
-      // int size = n * sizeof(T);
-      // uint b = 0, e;
-      // while (b < N) {
-      //   int v = view(b);
-      //   e = b + sizeof(int) + (v < 0 ? -v : v);
-      //   if (v >= size) {
-      //     if (v - size < min_block()) {
-      //       size = v;
-      //     }
-      //     view(b) = -(size);
-      //     view(b + size + sizeof(int)) = view(b);
-
-      //     if ((b + size + sizeof(int)) != e) {
-      //       int diff = v - size - 2 * sizeof(int);
-      //       view(b + size + sizeof(int) * 2) = diff;
-      //       view(e) = diff;
-      //     }
-      //     return reinterpret_cast<pointer>(&a[b + sizeof(int)]);
-      //   }
-      //   b = e + sizeof(int);
-      // }
-      // throw std::bad_alloc();  
     }
 
     // ---------
@@ -250,8 +223,44 @@ class Allocator {
      * <your documentation>
      */
     void deallocate (pointer p, size_type) {
-      // <your code>
-      // size_type i = *p;
+      assert(valid());
+
+      int i = (char*)(p) - &a[0];
+      int sentinel = *((int *)&a[i - 4]);
+
+      int *p1 = (int *)(&a[i - 4]);
+      *p1 = abs(sentinel);
+
+      int *p2 = (int *)(&a[i - sentinel]);
+      *p2 = abs(sentinel);
+            
+      int pToEnd = &a[N - 1] - (char*)(p);
+
+      int seninel_new = sentinel;
+
+      if(i - 4 >= smallest_block) {
+        int seninel_left = *((int *)&a[i - (2 * sizeof(int))]);
+
+        if(seninel_left > 0) {
+          seninel_new = seninel_left + (sentinel * -1) + 2 * sizeof(int); 
+          int *p3 = (int *)(&a[i - (3 * sizeof(int)) - seninel_left]);
+
+          *p3 = seninel_new;
+          *p2 = seninel_new;
+        }
+      }
+
+      if(pToEnd - 4 - (sentinel * -1) >= smallest_block) {
+        int seninel_right = *((int *)&a[i - sentinel + 4]);
+        
+        if(seninel_right > 0) {
+          seninel_new = seninel_right + (sentinel * -1) + 2 * sizeof(int);
+          int *p4 = (int *)(&a[i + (sentinel * -1) + seninel_right + (2 * sizeof(int))]);
+
+          *p4 = seninel_new;
+          *p1 = seninel_new;
+        }
+      }
       assert(valid());
     }
 
@@ -275,6 +284,10 @@ class Allocator {
      */
     const int& operator [] (int i) const {
       return *reinterpret_cast<const int*>(&a[i]);
+    }
+
+    int& operator [] (int i) {
+      return *reinterpret_cast<int*>(&a[i]);
     }
 };
 
