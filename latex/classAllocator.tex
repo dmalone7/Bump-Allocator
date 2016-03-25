@@ -34,14 +34,13 @@ pointer \hyperlink{classAllocator_a8a19b7b675f5434c28c68fb15de86f36}{allocate} (
 \item 
 void \hyperlink{classAllocator_a6e6a26ece248be1eb76ed691c085cd65}{construct} (pointer p, const\-\_\-reference v)
 \item 
-void \hyperlink{classAllocator_a8823b257191f53d7f1efac9332d8f61a}{deallocate} (pointer p, size\-\_\-type)
+void \hyperlink{classAllocator_aaf1dbab9be62941817f98618f94c7146}{deallocate} (pointer p, size\-\_\-type t)
 \item 
 void \hyperlink{classAllocator_af156a6a50a8c62c70e40cf342a3b64cb}{destroy} (pointer p)
 \item 
 const int \& \hyperlink{classAllocator_a107cf1e09d9119f2819c0b5f6cdbe20b}{operator\mbox{[}$\,$\mbox{]}} (int i) const 
 \item 
-\hypertarget{classAllocator_ae57d6a9fc29cb1c1e61f58f90f7f3123}{int \& {\bfseries operator\mbox{[}$\,$\mbox{]}} (int i)}\label{classAllocator_ae57d6a9fc29cb1c1e61f58f90f7f3123}
-
+int \& \hyperlink{classAllocator_ae57d6a9fc29cb1c1e61f58f90f7f3123}{operator\mbox{[}$\,$\mbox{]}} (int i)
 \end{DoxyCompactItemize}
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
@@ -62,7 +61,15 @@ const int \& \hyperlink{classAllocator_a107cf1e09d9119f2819c0b5f6cdbe20b}{operat
 {}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_a4e2bf5fbf94e2206bb72b71ad4b7ffb3}
-O(1) in space O(1) in time throw a bad\-\_\-alloc exception, if N is less than sizeof(\-T) + (2 $\ast$ sizeof(int)) 
+O(1) in space O(1) in time Default constructor that creates and initializes \hyperlink{classAllocator}{Allocator} object for use. throw a bad\-\_\-alloc exception, if N is less than sizeof(\-T) + (2 $\ast$ sizeof(int)) 
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
 
 \subsection{Member Function Documentation}
 \hypertarget{classAllocator_a8a19b7b675f5434c28c68fb15de86f36}{\index{Allocator@{Allocator}!allocate@{allocate}}
@@ -72,7 +79,15 @@ O(1) in space O(1) in time throw a bad\-\_\-alloc exception, if N is less than s
 \item[{size\-\_\-type}]{n}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_a8a19b7b675f5434c28c68fb15de86f36}
-make O(1) in space O(n) in time after allocation there must be enough space left for a valid block the smallest allowable block is sizeof(\-T) + (2 $\ast$ sizeof(int)) choose the first block that fits throw a bad\-\_\-alloc exception, if n is invalid \hypertarget{classAllocator_a6e6a26ece248be1eb76ed691c085cd65}{\index{Allocator@{Allocator}!construct@{construct}}
+O(1) in space O(n) in time after allocation there must be enough space left for a valid block the smallest allowable block is sizeof(\-T) + (2 $\ast$ sizeof(int)) choose the first block that fits throw a bad\-\_\-alloc exception, if n is invalid 
+\begin{DoxyParams}{Parameters}
+{\em size\-\_\-type} & n to allocate n $\ast$ sizeof(\-T) space in heap \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pointer to the allocated space in heap 
+\end{DoxyReturn}
+\hypertarget{classAllocator_a6e6a26ece248be1eb76ed691c085cd65}{\index{Allocator@{Allocator}!construct@{construct}}
 \index{construct@{construct}!Allocator@{Allocator}}
 \subsubsection[{construct}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , std\-::size\-\_\-t N$>$ void {\bf Allocator}$<$ T, N $>$\-::construct (
 \begin{DoxyParamCaption}
@@ -80,29 +95,73 @@ make O(1) in space O(n) in time after allocation there must be enough space left
 \item[{const\-\_\-reference}]{v}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_a6e6a26ece248be1eb76ed691c085cd65}
-O(1) in space O(1) in time \hypertarget{classAllocator_a8823b257191f53d7f1efac9332d8f61a}{\index{Allocator@{Allocator}!deallocate@{deallocate}}
+O(1) in space O(1) in time 
+\begin{DoxyParams}{Parameters}
+{\em pointer} & p, const\-\_\-reference v \\
+\hline
+\end{DoxyParams}
+\hypertarget{classAllocator_aaf1dbab9be62941817f98618f94c7146}{\index{Allocator@{Allocator}!deallocate@{deallocate}}
 \index{deallocate@{deallocate}!Allocator@{Allocator}}
 \subsubsection[{deallocate}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , std\-::size\-\_\-t N$>$ void {\bf Allocator}$<$ T, N $>$\-::deallocate (
 \begin{DoxyParamCaption}
 \item[{pointer}]{p, }
-\item[{size\-\_\-type}]{}
+\item[{size\-\_\-type}]{t}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_a8823b257191f53d7f1efac9332d8f61a}
-O(1) in space O(1) in time after deallocation adjacent free blocks must be coalesced throw an invalid\-\_\-argument exception, if p is invalid $<$your documentation$>$=\char`\"{}\char`\"{}$>$ \hypertarget{classAllocator_af156a6a50a8c62c70e40cf342a3b64cb}{\index{Allocator@{Allocator}!destroy@{destroy}}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_aaf1dbab9be62941817f98618f94c7146}
+O(1) in space O(1) in time after deallocation adjacent free blocks must be coalesced throw an invalid\-\_\-argument exception, if p is invalid 
+\begin{DoxyParams}{Parameters}
+{\em pointer} & to space to deallocate in heap, size\-\_\-type t \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+\hypertarget{classAllocator_af156a6a50a8c62c70e40cf342a3b64cb}{\index{Allocator@{Allocator}!destroy@{destroy}}
 \index{destroy@{destroy}!Allocator@{Allocator}}
 \subsubsection[{destroy}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , std\-::size\-\_\-t N$>$ void {\bf Allocator}$<$ T, N $>$\-::destroy (
 \begin{DoxyParamCaption}
 \item[{pointer}]{p}
 \end{DoxyParamCaption}
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_af156a6a50a8c62c70e40cf342a3b64cb}
-O(1) in space O(1) in time \hypertarget{classAllocator_a107cf1e09d9119f2819c0b5f6cdbe20b}{\index{Allocator@{Allocator}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
+O(1) in space O(1) in time 
+\begin{DoxyParams}{Parameters}
+{\em pointer} & p \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+\hypertarget{classAllocator_a107cf1e09d9119f2819c0b5f6cdbe20b}{\index{Allocator@{Allocator}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
 \index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!Allocator@{Allocator}}
 \subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , std\-::size\-\_\-t N$>$ const int\& {\bf Allocator}$<$ T, N $>$\-::operator\mbox{[}$\,$\mbox{]} (
 \begin{DoxyParamCaption}
 \item[{int}]{i}
 \end{DoxyParamCaption}
 ) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_a107cf1e09d9119f2819c0b5f6cdbe20b}
-O(1) in space O(1) in time $<$your documentation$>$=\char`\"{}\char`\"{}$>$ 
+O(1) in space O(1) in time 
+\begin{DoxyParams}{Parameters}
+{\em int} & for array indexing \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+read-\/only reference to heap 
+\end{DoxyReturn}
+\hypertarget{classAllocator_ae57d6a9fc29cb1c1e61f58f90f7f3123}{\index{Allocator@{Allocator}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
+\index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!Allocator@{Allocator}}
+\subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T , std\-::size\-\_\-t N$>$ int\& {\bf Allocator}$<$ T, N $>$\-::operator\mbox{[}$\,$\mbox{]} (
+\begin{DoxyParamCaption}
+\item[{int}]{i}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classAllocator_ae57d6a9fc29cb1c1e61f58f90f7f3123}
+O(1) in space O(1) in time 
+\begin{DoxyParams}{Parameters}
+{\em int} & for array indexing \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reference to heap 
+\end{DoxyReturn}
+
 
 The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 

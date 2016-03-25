@@ -1,3 +1,27 @@
+commit 187109c936c466bd999f93abf193d92a8ffc5144
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 20:39:29 2016 -0500
+
+    created more unit tests
+
+commit 809c5bdb8c3a2995e90b532be29d80497216c5f7
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 19:56:27 2016 -0500
+
+    fixed allocate/deallocate functions and added more tests
+
+commit 6e2806b352e044dfc9ee3a10a38d0ce1211c6c76
+Author: David <dmalone7@users.noreply.github.com>
+Date:   Wed Mar 23 23:38:30 2016 -0500
+
+    added more to functionality to allocate.h
+
+commit 2d2734dfdc62b9829887f86b1d07b04c2fd27aac
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Wed Mar 23 20:34:33 2016 -0500
+
+    added travis.yml and made changes to allocate
+
 commit bb47871ad606f6cc8604c38cbc8238618df09426
 Author: David <dmalone7@users.noreply.github.com>
 Date:   Sun Mar 20 23:00:39 2016 -0500

@@ -1,7 +1,7 @@
 // ------------------------------------
 // projects/allocator/TestAllocator1.c++
-// Copyright (C) 2015
-// Glenn P. Downing
+// Copyright (C) 2016
+// David Malone
 // ------------------------------------
 
 // --------
@@ -153,8 +153,6 @@ TEST(TestAllocate, allocate_4) {
     }
 }
 
-
-
 // ---------------
 // TestDeallocator
 // ---------------
@@ -190,6 +188,25 @@ TEST(TestDeallocator, deallocate_3) {
     } catch (std::invalid_argument) {
         ASSERT_TRUE(true);
     }
+}
+
+// --------------
+// TestAbs
+// --------------
+
+TEST(TestAbsolute, abs_1) {
+    Allocator<int, 100> x;
+    ASSERT_EQ(x.abs(-1000), 1000);
+}
+
+TEST(TestAbsolute, abs_2) {
+    Allocator<int, 100> x;
+    ASSERT_EQ(x.abs(1000), 1000);
+}
+
+TEST(TestAbsolute, abs_3) {
+    Allocator<int, 100> x;
+    ASSERT_EQ(x.abs(0), 0);
 }
 
 // --------------

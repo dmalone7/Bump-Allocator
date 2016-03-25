@@ -123,14 +123,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8a19b7b675f5434c28c68fb15de86f36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e6a26ece248be1eb76ed691c085cd65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#a6e6a26ece248be1eb76ed691c085cd65">construct</a> (pointer p, const_reference v)</td></tr>
 <tr class="separator:a6e6a26ece248be1eb76ed691c085cd65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8823b257191f53d7f1efac9332d8f61a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#a8823b257191f53d7f1efac9332d8f61a">deallocate</a> (pointer p, size_type)</td></tr>
-<tr class="separator:a8823b257191f53d7f1efac9332d8f61a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf1dbab9be62941817f98618f94c7146"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#aaf1dbab9be62941817f98618f94c7146">deallocate</a> (pointer p, size_type t)</td></tr>
+<tr class="separator:aaf1dbab9be62941817f98618f94c7146"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af156a6a50a8c62c70e40cf342a3b64cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">destroy</a> (pointer p)</td></tr>
 <tr class="separator:af156a6a50a8c62c70e40cf342a3b64cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a107cf1e09d9119f2819c0b5f6cdbe20b"><td class="memItemLeft" align="right" valign="top">const int &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">operator[]</a> (int i) const </td></tr>
 <tr class="separator:a107cf1e09d9119f2819c0b5f6cdbe20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae57d6a9fc29cb1c1e61f58f90f7f3123"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae57d6a9fc29cb1c1e61f58f90f7f3123"></a>
-int &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (int i)</td></tr>
+<tr class="memitem:ae57d6a9fc29cb1c1e61f58f90f7f3123"><td class="memItemLeft" align="right" valign="top">int &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAllocator.html#ae57d6a9fc29cb1c1e61f58f90f7f3123">operator[]</a> (int i)</td></tr>
 <tr class="separator:ae57d6a9fc29cb1c1e61f58f90f7f3123"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -165,7 +164,14 @@ template&lt;typename T , std::size_t N&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>O(1) in space O(1) in time throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int)) </p>
+<p>O(1) in space O(1) in time Default constructor that creates and initializes <a class="el" href="classAllocator.html">Allocator</a> object for use. throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int)) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">none</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -193,7 +199,14 @@ template&lt;typename T , std::size_t N&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>make O(1) in space O(n) in time after allocation there must be enough space left for a valid block the smallest allowable block is sizeof(T) + (2 * sizeof(int)) choose the first block that fits throw a bad_alloc exception, if n is invalid </p>
+<p>O(1) in space O(n) in time after allocation there must be enough space left for a valid block the smallest allowable block is sizeof(T) + (2 * sizeof(int)) choose the first block that fits throw a bad_alloc exception, if n is invalid </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size_type</td><td>n to allocate n * sizeof(T) space in heap </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the allocated space in heap </dd></dl>
 
 </div>
 </div>
@@ -231,10 +244,16 @@ template&lt;typename T , std::size_t N&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>O(1) in space O(1) in time </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>p, const_reference v </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a8823b257191f53d7f1efac9332d8f61a"></a>
+<a class="anchor" id="aaf1dbab9be62941817f98618f94c7146"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -253,7 +272,7 @@ template&lt;typename T , std::size_t N&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_type&#160;</td>
-          <td class="paramname">&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -267,7 +286,14 @@ template&lt;typename T , std::size_t N&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>O(1) in space O(1) in time after deallocation adjacent free blocks must be coalesced throw an invalid_argument exception, if p is invalid &lt;your documentation&gt;=""&gt; </p>
+<p>O(1) in space O(1) in time after deallocation adjacent free blocks must be coalesced throw an invalid_argument exception, if p is invalid </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>to space to deallocate in heap, size_type t </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -295,6 +321,13 @@ template&lt;typename T , std::size_t N&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>O(1) in space O(1) in time </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pointer</td><td>p </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
 
 </div>
 </div>
@@ -321,7 +354,48 @@ template&lt;typename T , std::size_t N&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>O(1) in space O(1) in time &lt;your documentation&gt;=""&gt; </p>
+<p>O(1) in space O(1) in time </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">int</td><td>for array indexing </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>read-only reference to heap </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae57d6a9fc29cb1c1e61f58f90f7f3123"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , std::size_t N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int&amp; <a class="el" href="classAllocator.html">Allocator</a>&lt; T, N &gt;::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>O(1) in space O(1) in time </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">int</td><td>for array indexing </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>reference to heap </dd></dl>
 
 </div>
 </div>
@@ -331,7 +405,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 24 2016 14:20:45 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 24 2016 21:16:20 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

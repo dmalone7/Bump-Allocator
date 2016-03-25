@@ -67,7 +67,11 @@ class Allocator {
     /**
      * O(1) in space
      * O(n) in time
-     * <your documentation>
+     * Checks if the sentinels in the heap are valid by checking
+     * if they are the same.
+     * @param none
+     * @return true if valid, false if not
+     * https://code.google.com/p/googletest/wiki/AdvancedGuide#Private_Class_Members
      */
     FRIEND_TEST(TestValid, valid_1);
     FRIEND_TEST(TestValid, valid_2);
@@ -92,23 +96,25 @@ class Allocator {
       return false;
     }
 
+    // -----
+    // abs
+    // -----
+
     /**
      * O(1) in space
      * O(1) in time
-     * <your documentation>
-     * https://code.google.com/p/googletest/wiki/AdvancedGuide#Private_Class_Members
+     * @param any int to make absolute
+     * @return int absolute value
      */
-
-    // int& operator [] (int i) {
-    //   return *reinterpret_cast<int*>(&a[i]);
-    // }
-
     FRIEND_TEST(TestAbsolute, abs_1);
     FRIEND_TEST(TestAbsolute, abs_2);
     FRIEND_TEST(TestAbsolute, abs_3);
     int abs(int num) const {
       int mask = (num >> 31);
-      return (num ^ mask) - mask;
+      int pos = (num ^ mask) - mask;
+
+      assert(pos >= 0);
+      return pos;
     }
 
   public:
@@ -119,7 +125,11 @@ class Allocator {
     /**
      * O(1) in space
      * O(1) in time
+     * Default constructor that creates and initializes Allocator 
+     * object for use.
      * throw a bad_alloc exception, if N is less than sizeof(T) + (2 * sizeof(int))
+     * @param none
+     * @return none
      */
     Allocator () {
       smallest_block = sizeof(T) + (2 * sizeof(int));
@@ -145,13 +155,15 @@ class Allocator {
     // allocate
     // --------
 
-    /**make 
+    /** 
      * O(1) in space
      * O(n) in time
      * after allocation there must be enough space left for a valid block
      * the smallest allowable block is sizeof(T) + (2 * sizeof(int))
      * choose the first block that fits
      * throw a bad_alloc exception, if n is invalid
+     * @param size_type n to allocate n * sizeof(T) space in heap
+     * @return pointer to the allocated space in heap
      */
     pointer allocate (size_type n) {
       assert(valid());
@@ -200,6 +212,7 @@ class Allocator {
       i += sentinel + sizeof(int);
       *((int *)&a[i]) = sentinel;
 
+      assert(valid());
       return p;
     }
 
@@ -210,6 +223,7 @@ class Allocator {
     /**
      * O(1) in space
      * O(1) in time
+     * @param pointer p, const_reference v
      */
     void construct (pointer p, const_reference v) {
       new (p) T(v);                               // this is correct and exempt
@@ -225,7 +239,8 @@ class Allocator {
      * O(1) in time
      * after deallocation adjacent free blocks must be coalesced
      * throw an invalid_argument exception, if p is invalid
-     * <your documentation>
+     * @param pointer to space to deallocate in heap, size_type t
+     * @return none
      */
     void deallocate (pointer p, size_type t) {
       assert(valid());
@@ -276,6 +291,8 @@ class Allocator {
     /**
      * O(1) in space
      * O(1) in time
+     * @param pointer p
+     * @return none
      */
     void destroy (pointer p) {
       p->~T();               // this is correct
@@ -285,11 +302,19 @@ class Allocator {
     /**
      * O(1) in space
      * O(1) in time
-     * <your documentation>
+     * @param int for array indexing
+     * @return read-only reference to heap
      */
     const int& operator [] (int i) const {
       return *reinterpret_cast<const int*>(&a[i]);
     }
+
+     /**
+     * O(1) in space
+     * O(1) in time
+     * @param int for array indexing
+     * @return reference to heap
+     */
 
     int& operator [] (int i) {
       return *reinterpret_cast<int*>(&a[i]);
