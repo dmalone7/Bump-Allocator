@@ -1,3 +1,9 @@
+commit 9672064be6b047de53b4cba51546da5241f7e0e5
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 21:43:30 2016 -0500
+
+    updated html files for new Allocator.h
+
 commit 520918f194f830b9bc327aa621d2eb353119bc33
 Author: David Malone <dmalone7@cs.utexas.edu>
 Date:   Thu Mar 24 21:42:33 2016 -0500
