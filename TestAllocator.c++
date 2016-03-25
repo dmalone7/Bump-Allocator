@@ -10,8 +10,6 @@
 
 #include <algorithm> // count
 #include <memory>    // allocator
-#include <new>       // bad_alloc
-#include <stdexcept> // invalid_argument
 
 #include "gtest/gtest.h"
 
@@ -30,8 +28,7 @@ struct TestAllocator1 : testing::Test {
     typedef          A             allocator_type;
     typedef typename A::value_type value_type;
     typedef typename A::size_type  size_type;
-    typedef typename A::pointer    pointer;
-};
+    typedef typename A::pointer    pointer;};
 
 typedef testing::Types<
             std::allocator<int>,
@@ -76,16 +73,13 @@ TYPED_TEST(TestAllocator1, test_10) {
         try {
             while (p != e) {
                 x.construct(p, v);
-                ++p;
-            }
-        }
+                ++p;}}
         catch (...) {
             while (b != p) {
                 --p;
                 x.destroy(p);}
             x.deallocate(b, s);
-            throw;
-        }
+            throw;}
         ASSERT_EQ(s, std::count(b, e, v));
         while (b != e) {
             --e;
@@ -101,44 +95,45 @@ TYPED_TEST(TestAllocator1, test_10) {
 TEST(TestAllocator2, const_index) {
     const Allocator<int, 100> x;
     ASSERT_EQ(x[0], 92);
-}
+    ASSERT_EQ(x[96], 92);}
 
-TEST(TestAllocator2, index) {
+TEST(TestAllocator2, index1) {
     Allocator<int, 100> x;
     ASSERT_EQ(x[0], 92);
+    ASSERT_EQ(x[96], 92);}
+
+TEST(TestAllocator2, index2) {
+    const Allocator<int, 52> x;
+    ASSERT_EQ(x[48], 44);
+    ASSERT_EQ(x[0], 44);
 }
 
-// New tests
-TEST(TestAllocator2, allocate1) { // Allocator finds first fit
-    Allocator<int, 100> x;
+// --------------
+// TestAllocate
+// --------------
 
-    int *p1 = x.allocate(10);
-    ASSERT_EQ(p1, &x[4]);
+TEST(TestAllocate, allocate_1) {
+    Allocator<int, 100> x;
+    x.allocate(4);
+    ASSERT_EQ(x[0], -16);
+    ASSERT_EQ(x[20], -16);
+    ASSERT_EQ(x[24], 68);
+    ASSERT_EQ(x[96], 68);
+}
+
+TEST(TestAllocate, allocate_2) {
+    Allocator<double, 100> x;
+    x.allocate(5);
+    x.allocate(3);
     ASSERT_EQ(x[0], -40);
     ASSERT_EQ(x[44], -40);
-    ASSERT_EQ(x[48], 44);
-    ASSERT_EQ(x[96], 44);
+    ASSERT_EQ(x[48], -24);
+    ASSERT_EQ(x[76], -24);
+    ASSERT_EQ(x[80], 12);
+    ASSERT_EQ(x[96], 12);
 }
 
-TEST(TestAllocator2, allocate2) {
-    Allocator<int, 100> x;
-    
-    int *p1 = x.allocate(10);
-    ASSERT_EQ(p1, &x[4]);
-    ASSERT_EQ(x[0], -40);
-    ASSERT_EQ(x[44], -40);
-    ASSERT_EQ(x[48], 44);
-    ASSERT_EQ(x[96], 44);
-
-    int *p2 = x.allocate(5);
-    ASSERT_EQ(p2, &x[52]);
-    ASSERT_EQ(x[48], -20);
-    ASSERT_EQ(x[72], -20);
-    ASSERT_EQ(x[76], 16);
-    ASSERT_EQ(x[96], 16);
-}
-
-TEST(TestAllocator2, allocate3) {
+TEST(TestAllocate, allocate_3) {
     Allocator<int, 100> x;
 
     int *p1 = x.allocate(17);
@@ -148,131 +143,82 @@ TEST(TestAllocator2, allocate3) {
     ASSERT_NE(p2, nullptr);
 }
 
-TEST(TestAllocator4, allocate_no_fit) { // Allocator finds no fit
-    Allocator<int, 100> x;
-
-    int *p1 = x.allocate(20);
-    ASSERT_NE(p1, nullptr);
-
-    ASSERT_THROW({
-        x.allocate(20);
-    }, std::bad_alloc);
+TEST(TestAllocate, allocate_4) {
+    try {
+        Allocator<int, 101> x;
+        x.allocate(23);
+        x.allocate(1);
+    } catch (std::bad_alloc) {
+        ASSERT_TRUE(true);
+    }
 }
 
-TEST(TestAllocator2, deallocate1) {
-    Allocator<int, 100> x;
 
+
+// ---------------
+// TestDeallocator
+// ---------------
+
+TEST(TestDeallocator, deallocate_1) {
+    Allocator<int, 100> x;
     int *p1 = x.allocate(10);
-    
     x.deallocate(p1, 10 * sizeof(int));
     ASSERT_EQ(x[0], 92);
     ASSERT_EQ(x[96], 92);
 }
 
-TEST(TestAllocator2, deallocate2) { // coalesce before block
-    Allocator<int, 100> x;
-    
-    int *p1 = x.allocate(10);
-    
-    int* p2 = x.allocate(5);
-    
-    x.deallocate(p1, 10 * sizeof(int));
-    ASSERT_EQ(x[0], 40);
-    ASSERT_EQ(x[44], 40);
-    ASSERT_EQ(x[48], -20);
-    ASSERT_EQ(x[72], -20);
-    ASSERT_EQ(x[76], 16);
-    ASSERT_EQ(x[96], 16);
-
-    x.deallocate(p2, 5 * sizeof(int));
-    ASSERT_EQ(x[0], 92);
-    ASSERT_EQ(x[96], 92);
-}
-
-TEST(TestAllocator2, deallocate3) { // coalesce after block
-    Allocator<int, 100> x;
-    
-    int *p1 = x.allocate(10);
-    
-    int* p2 = x.allocate(5);
-    
-    x.deallocate(p2, 5 * sizeof(int));
+TEST(TestDeallocator, deallocate_2) {
+    Allocator<double, 100> x;
+    double* p = x.allocate(5);
     ASSERT_EQ(x[0], -40);
     ASSERT_EQ(x[44], -40);
     ASSERT_EQ(x[48], 44);
     ASSERT_EQ(x[96], 44);
-
-    x.deallocate(p1, 10 * sizeof(int));
+    x.deallocate(p, (size_t)5);
     ASSERT_EQ(x[0], 92);
     ASSERT_EQ(x[96], 92);
 }
 
-TEST(TestAllocator2, deallocate4) {
+TEST(TestDeallocator, deallocate_3) {
     Allocator<int, 100> x;
-    
-    int *p1 = x.allocate(20);
-    ASSERT_NE(p1, nullptr);
-    x.deallocate(p1, 20 * sizeof(int));
-
-    int *p2 = x.allocate(20); // see if deallocate freed the space
-    ASSERT_NE(p2, nullptr);
-    x.deallocate(p2, 20 * sizeof(int));
+    int *p = x.allocate(23);
+    x.deallocate(p, 0);
+    ASSERT_EQ(x[0], 92);
+    ASSERT_EQ(x[96], 92);
+    try {
+        x.deallocate(p, 0);
+    } catch (std::invalid_argument) {
+        ASSERT_TRUE(true);
+    }
 }
 
-TEST(TestAllocator2, big) {
-    Allocator<int, 1000000> x;
-    ASSERT_EQ(x[0], 999992);
-    ASSERT_EQ(x[999996], 999992);
-}
-
-TEST(TestAllocator2, extra_space) { // see if allocator gives extra space if there isn't enough left for another block
-    Allocator<int, 100> x;
-
-    x.allocate(21);
-    ASSERT_EQ(x[0], -92);
-    ASSERT_EQ(x[96], -92);
-}
-
-// ----------------------
-// TestAllocatorEdgeCases
-// ----------------------
-
-TEST(TestAllocatorEdgeCases, too_big) {
-    Allocator<int, 100> x;
-
-    ASSERT_THROW(x.allocate(24), std::bad_alloc);
-}
-
-TEST(TestAllocatorEdgeCases, much_too_big) {
-    Allocator<int, 100> x;
-
-    ASSERT_THROW(x.allocate(100), std::bad_alloc);
-}
-
-
-TEST(TestAllocatorEdgeCases, allocator_bad_alloc) {
-    typedef Allocator<int, 11> Allocator11; // because commas don't work in macro arguments
-    ASSERT_THROW({
-        Allocator11 x;
-    }, std::bad_alloc);
-}
-
-TEST(TestAllocatorEdgeCases, allocator_min_size) {
-    typedef Allocator<int, 20> Allocator20; // because commas don't work in macro arguments
-    ASSERT_NO_THROW({
-        Allocator20 x;
-    });
-}
-
-// ---------
+// --------------
 // TestValid
-// ---------
+// --------------
 
-TEST(TestValid, no_space) {
+TEST(TestValid, valid_1) {
+    Allocator<int, 52> y;
+    y[0] = -44;
+    y[48] = -44;
+    ASSERT_TRUE(y.valid());
+}
+
+TEST(TestValid, valid_2) {
+   Allocator<int, 100> x;
+   x[0] = -40;  
+   x[44] = -40;
+   x[48] = 24;
+   x[76] = 24;
+   x[80] = -12;
+   x[96] = -12;
+   ASSERT_TRUE(x.valid());
+}
+
+TEST(TestValid, valid_3) {
     Allocator<int, 100> x;
-    x[0] = -92;
-    x[96] = -92;
-    //ASSERT_EQ(x.valid(), false);
+    int *p = x.allocate(20);
+    x.deallocate(p, 0);
+    ASSERT_TRUE(x.valid());
 }
 
 // --------------
@@ -288,8 +234,7 @@ struct TestAllocator3 : testing::Test {
     typedef          A             allocator_type;
     typedef typename A::value_type value_type;
     typedef typename A::size_type  size_type;
-    typedef typename A::pointer    pointer;
-};
+    typedef typename A::pointer    pointer;};
 
 typedef testing::Types<
             Allocator<int,    100>,
@@ -332,17 +277,13 @@ TYPED_TEST(TestAllocator3, test_10) {
         try {
             while (p != e) {
                 x.construct(p, v);
-                ++p;
-            }
-        }
+                ++p;}}
         catch (...) {
             while (b != p) {
                 --p;
-                x.destroy(p);
-            }
+                x.destroy(p);}
             x.deallocate(b, s);
-            throw;
-        }
+            throw;}
         ASSERT_EQ(s, std::count(b, e, v));
         while (b != e) {
             --e;

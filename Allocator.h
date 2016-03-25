@@ -69,6 +69,9 @@ class Allocator {
      * O(n) in time
      * <your documentation>
      */
+    FRIEND_TEST(TestValid, valid_1);
+    FRIEND_TEST(TestValid, valid_2);
+    FRIEND_TEST(TestValid, valid_3);
     bool valid () const {
       int i, s1, s2;
       i = 0;
@@ -95,12 +98,14 @@ class Allocator {
      * <your documentation>
      * https://code.google.com/p/googletest/wiki/AdvancedGuide#Private_Class_Members
      */
-    // FRIEND_TEST(TestAllocator2, i);
-    // FRIEND_TEST(TestAllocator2, double_i);
+
     // int& operator [] (int i) {
     //   return *reinterpret_cast<int*>(&a[i]);
     // }
 
+    FRIEND_TEST(TestAbsolute, abs_1);
+    FRIEND_TEST(TestAbsolute, abs_2);
+    FRIEND_TEST(TestAbsolute, abs_3);
     int abs(int num) const {
       int mask = (num >> 31);
       return (num ^ mask) - mask;
@@ -222,7 +227,7 @@ class Allocator {
      * throw an invalid_argument exception, if p is invalid
      * <your documentation>
      */
-    void deallocate (pointer p, size_type) {
+    void deallocate (pointer p, size_type t) {
       assert(valid());
 
       int i = (char*)(p) - &a[0];
@@ -242,7 +247,7 @@ class Allocator {
         int seninel_left = *((int *)&a[i - (2 * sizeof(int))]);
 
         if(seninel_left > 0) {
-          seninel_new = seninel_left + (sentinel * -1) + 2 * sizeof(int); 
+          seninel_new = seninel_left + abs(sentinel) + 2 * sizeof(int); 
           int *p3 = (int *)(&a[i - (3 * sizeof(int)) - seninel_left]);
 
           *p3 = seninel_new;
@@ -252,10 +257,10 @@ class Allocator {
 
       if(pToEnd - 4 - (sentinel * -1) >= smallest_block) {
         int seninel_right = *((int *)&a[i - sentinel + 4]);
-        
+
         if(seninel_right > 0) {
-          seninel_new = seninel_right + (sentinel * -1) + 2 * sizeof(int);
-          int *p4 = (int *)(&a[i + (sentinel * -1) + seninel_right + (2 * sizeof(int))]);
+          seninel_new = seninel_right + abs(sentinel) + 2 * sizeof(int);
+          int *p4 = (int *)(&a[i + abs(sentinel) + seninel_right + (2 * sizeof(int))]);
 
           *p4 = seninel_new;
           *p1 = seninel_new;
