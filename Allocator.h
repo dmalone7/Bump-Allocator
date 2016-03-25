@@ -134,8 +134,9 @@ class Allocator {
     Allocator () {
       smallest_block = sizeof(T) + (2 * sizeof(int));
       if (N < smallest_block)
-        throw std::bad_alloc();
+        throw std::bad_alloc(); // throw if space asked for is smaller than smallest block 
 
+      // set up sentinels
       int i = 0;
       int sentinel = N - (2 * sizeof(int));
       *((int*)&a[i]) = sentinel;
@@ -169,7 +170,7 @@ class Allocator {
       assert(valid());
 
       if (n < 1)
-        throw std::bad_alloc();
+        throw std::bad_alloc(); // throw if invalid argument
 
       pointer p = nullptr;
       int sentinel = 0;
@@ -178,6 +179,7 @@ class Allocator {
       while (i < N) {
         sentinel = *((int*)&a[i]);
 
+        // break if space big enough found
         if (sentinel > 0 && sentinel >= ((n * sizeof(T)))) {
           p = (pointer)&a[i + 4];
           break;
@@ -186,8 +188,9 @@ class Allocator {
       }
 
       if (i >= N)
-        throw std::bad_alloc();
+        throw std::bad_alloc(); // throw if no space found
 
+      // change allocated space sentinels
       int old_sentinel = sentinel;
       int *p1 = ((int*)&a[i]);
 
@@ -199,6 +202,7 @@ class Allocator {
 
       i += sizeof(int);
 
+      // return more space if space left is too small for allocation
       if (i >= N - sizeof(T) - 2 * sizeof(int)) {
         i = (char*)p1 - &a[0];
         i += old_sentinel + sizeof(int);
@@ -207,6 +211,7 @@ class Allocator {
         return p;
       }
 
+      // change free space space sentinels
       sentinel = old_sentinel - (sentinel + 2 * sizeof(int));
       *((int *)&a[i]) = sentinel;
       i += sentinel + sizeof(int);
@@ -246,16 +251,16 @@ class Allocator {
       assert(valid());
 
       if (p == 0)
-        return;
+        return; // error check
 
       if ((char*)(p) < &a[4] || (char*)(p) > &a[N - 5])
-        throw std::invalid_argument("invalid argument");
+        throw std::invalid_argument("invalid argument"); // throw if invalid argument
 
       int i = (char*)(p) - &a[0];
       int sentinel = *((int *)&a[i - 4]);
 
       if (sentinel > 0 || abs(sentinel) > N - 8)
-        throw std::invalid_argument("invalid argument");
+        throw std::invalid_argument("invalid argument");  // throw if space isn't allocated
 
       int *p1 = (int *)(&a[i - 4]);
       *p1 = abs(sentinel);
@@ -267,9 +272,11 @@ class Allocator {
 
       int seninel_new = sentinel;
 
+      // check left side of deallocated space if needs to converge
       if(i - 4 >= smallest_block) {
         int seninel_left = *((int *)&a[i - (2 * sizeof(int))]);
 
+        // converge if positive
         if(seninel_left > 0) {
           seninel_new = seninel_left + abs(sentinel) + 2 * sizeof(int); 
           int *p3 = (int *)(&a[i - (3 * sizeof(int)) - seninel_left]);
@@ -279,9 +286,11 @@ class Allocator {
         }
       }
 
+      // check right side of deallocated space if needs to converge
       if(pToEnd - 4 - (sentinel * -1) >= smallest_block) {
         int seninel_right = *((int *)&a[i - sentinel + 4]);
 
+        // converge if positive 
         if(seninel_right > 0) {
           seninel_new = seninel_right + abs(sentinel) + 2 * sizeof(int);
           int *p4 = (int *)(&a[i + abs(sentinel) + seninel_right + (2 * sizeof(int))]);
