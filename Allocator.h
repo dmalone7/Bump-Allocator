@@ -245,8 +245,17 @@ class Allocator {
     void deallocate (pointer p, size_type t) {
       assert(valid());
 
+      if (p == 0)
+        return;
+
+      if ((char*)(p) < &a[4] || (char*)(p) > &a[N - 5])
+        throw std::invalid_argument("invalid argument");
+
       int i = (char*)(p) - &a[0];
       int sentinel = *((int *)&a[i - 4]);
+
+      if (sentinel > 0 || abs(sentinel) > N - 8)
+        throw std::invalid_argument("invalid argument");
 
       int *p1 = (int *)(&a[i - 4]);
       *p1 = abs(sentinel);
@@ -315,7 +324,6 @@ class Allocator {
      * @param int for array indexing
      * @return reference to heap
      */
-
     int& operator [] (int i) {
       return *reinterpret_cast<int*>(&a[i]);
     }

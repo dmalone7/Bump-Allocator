@@ -108,6 +108,14 @@ TEST(TestAllocator2, index2) {
     ASSERT_EQ(x[0], 44);
 }
 
+TEST(TestAllocator2, index3) {
+    try {
+        Allocator<int, 1> x;
+    } catch (std::bad_alloc) {
+        ASSERT_TRUE(true);
+    }
+}
+
 // --------------
 // TestAllocate
 // --------------

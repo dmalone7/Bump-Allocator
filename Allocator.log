@@ -1,3 +1,9 @@
+commit ae29318aaa0d2925f40c0ab88cebd9c1d63f935c
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 21:19:41 2016 -0500
+
+    created more unit tests and made doxygen HTML folder
+
 commit 187109c936c466bd999f93abf193d92a8ffc5144
 Author: David Malone <dmalone7@cs.utexas.edu>
 Date:   Thu Mar 24 20:39:29 2016 -0500

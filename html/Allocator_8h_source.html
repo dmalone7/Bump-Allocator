@@ -282,75 +282,84 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classAllocator.html#aaf1dbab9be62941817f98618f94c7146">  245</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAllocator.html#aaf1dbab9be62941817f98618f94c7146">deallocate</a> (pointer p, size_type t) {</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      assert(valid());</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordtype">int</span> i = (<span class="keywordtype">char</span>*)(p) - &amp;a[0];</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <span class="keywordtype">int</span> sentinel = *((<span class="keywordtype">int</span> *)&amp;a[i - 4]);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordflow">if</span> (p == 0)</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      <span class="keywordtype">int</span> *p1 = (<span class="keywordtype">int</span> *)(&amp;a[i - 4]);</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      *p1 = abs(sentinel);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;      <span class="keywordflow">if</span> ((<span class="keywordtype">char</span>*)(p) &lt; &amp;a[4] || (<span class="keywordtype">char</span>*)(p) &gt; &amp;a[N - 5])</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;invalid argument&quot;</span>);</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      <span class="keywordtype">int</span> *p2 = (<span class="keywordtype">int</span> *)(&amp;a[i - sentinel]);</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      *p2 = abs(sentinel);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;      <span class="keywordtype">int</span> pToEnd = &amp;a[N - 1] - (<span class="keywordtype">char</span>*)(p);</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;      <span class="keywordtype">int</span> seninel_new = sentinel;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      <span class="keywordflow">if</span>(i - 4 &gt;= smallest_block) {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keywordtype">int</span> seninel_left = *((<span class="keywordtype">int</span> *)&amp;a[i - (2 * <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>))]);</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">if</span>(seninel_left &gt; 0) {</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;          seninel_new = seninel_left + abs(sentinel) + 2 * <span class="keyword">sizeof</span>(int); </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;          <span class="keywordtype">int</span> *p3 = (<span class="keywordtype">int</span> *)(&amp;a[i - (3 * <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>)) - seninel_left]);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      <span class="keywordtype">int</span> i = (<span class="keywordtype">char</span>*)(p) - &amp;a[0];</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      <span class="keywordtype">int</span> sentinel = *((<span class="keywordtype">int</span> *)&amp;a[i - 4]);</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;      <span class="keywordflow">if</span> (sentinel &gt; 0 || abs(sentinel) &gt; N - 8)</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;invalid argument&quot;</span>);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;      <span class="keywordtype">int</span> *p1 = (<span class="keywordtype">int</span> *)(&amp;a[i - 4]);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      *p1 = abs(sentinel);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      <span class="keywordtype">int</span> *p2 = (<span class="keywordtype">int</span> *)(&amp;a[i - sentinel]);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;      *p2 = abs(sentinel);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;      <span class="keywordtype">int</span> pToEnd = &amp;a[N - 1] - (<span class="keywordtype">char</span>*)(p);</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;          *p3 = seninel_new;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;          *p2 = seninel_new;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        }</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;      }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;      <span class="keywordtype">int</span> seninel_new = sentinel;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;      <span class="keywordflow">if</span>(i - 4 &gt;= smallest_block) {</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="keywordtype">int</span> seninel_left = *((<span class="keywordtype">int</span> *)&amp;a[i - (2 * <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>))]);</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      <span class="keywordflow">if</span>(pToEnd - 4 - (sentinel * -1) &gt;= smallest_block) {</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordtype">int</span> seninel_right = *((<span class="keywordtype">int</span> *)&amp;a[i - sentinel + 4]);</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordflow">if</span>(seninel_right &gt; 0) {</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;          seninel_new = seninel_right + abs(sentinel) + 2 * <span class="keyword">sizeof</span>(int);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;          <span class="keywordtype">int</span> *p4 = (<span class="keywordtype">int</span> *)(&amp;a[i + abs(sentinel) + seninel_right + (2 * <span class="keyword">sizeof</span>(int))]);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;          *p4 = seninel_new;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;          *p1 = seninel_new;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        }</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;      }</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      assert(valid());</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="comment">// -------</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="comment">// destroy</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="comment">// -------</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;</div>
-<div class="line"><a name="l00297"></a><span class="lineno"><a class="line" href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">  297</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">destroy</a> (pointer p) {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      p-&gt;~T();               <span class="comment">// this is correct</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;      assert(valid());</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;</div>
-<div class="line"><a name="l00308"></a><span class="lineno"><a class="line" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">  308</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; <a class="code" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">operator [] </a>(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span><span class="keywordtype">int</span>*<span class="keyword">&gt;</span>(&amp;a[i]);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    }</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00319"></a><span class="lineno"><a class="line" href="classAllocator.html#ae57d6a9fc29cb1c1e61f58f90f7f3123">  319</a></span>&#160;    <span class="keywordtype">int</span>&amp; <a class="code" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">operator [] </a>(<span class="keywordtype">int</span> i) {</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">int</span>*<span class="keyword">&gt;</span>(&amp;a[i]);</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;};</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="preprocessor">#endif // Allocator_h</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="keywordflow">if</span>(seninel_left &gt; 0) {</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;          seninel_new = seninel_left + abs(sentinel) + 2 * <span class="keyword">sizeof</span>(int); </div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;          <span class="keywordtype">int</span> *p3 = (<span class="keywordtype">int</span> *)(&amp;a[i - (3 * <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>)) - seninel_left]);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;          *p3 = seninel_new;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;          *p2 = seninel_new;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        }</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;      <span class="keywordflow">if</span>(pToEnd - 4 - (sentinel * -1) &gt;= smallest_block) {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordtype">int</span> seninel_right = *((<span class="keywordtype">int</span> *)&amp;a[i - sentinel + 4]);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="keywordflow">if</span>(seninel_right &gt; 0) {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;          seninel_new = seninel_right + abs(sentinel) + 2 * <span class="keyword">sizeof</span>(int);</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;          <span class="keywordtype">int</span> *p4 = (<span class="keywordtype">int</span> *)(&amp;a[i + abs(sentinel) + seninel_right + (2 * <span class="keyword">sizeof</span>(int))]);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;          *p4 = seninel_new;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;          *p1 = seninel_new;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      }</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      assert(valid());</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="comment">// -------</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="comment">// destroy</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// -------</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;</div>
+<div class="line"><a name="l00306"></a><span class="lineno"><a class="line" href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">  306</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">destroy</a> (pointer p) {</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;      p-&gt;~T();               <span class="comment">// this is correct</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;      assert(valid());</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;</div>
+<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">  317</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span>&amp; <a class="code" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">operator [] </a>(<span class="keywordtype">int</span> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">reinterpret_cast&lt;</span><span class="keyword">const </span><span class="keywordtype">int</span>*<span class="keyword">&gt;</span>(&amp;a[i]);</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;</div>
+<div class="line"><a name="l00327"></a><span class="lineno"><a class="line" href="classAllocator.html#ae57d6a9fc29cb1c1e61f58f90f7f3123">  327</a></span>&#160;    <span class="keywordtype">int</span>&amp; <a class="code" href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">operator [] </a>(<span class="keywordtype">int</span> i) {</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;      <span class="keywordflow">return</span> *<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">int</span>*<span class="keyword">&gt;</span>(&amp;a[i]);</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    }</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;};</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="preprocessor">#endif // Allocator_h</span></div>
 <div class="ttc" id="classAllocator_html"><div class="ttname"><a href="classAllocator.html">Allocator</a></div><div class="ttdef"><b>Definition:</b> Allocator.h:24</div></div>
 <div class="ttc" id="classAllocator_html_a8a19b7b675f5434c28c68fb15de86f36"><div class="ttname"><a href="classAllocator.html#a8a19b7b675f5434c28c68fb15de86f36">Allocator::allocate</a></div><div class="ttdeci">pointer allocate(size_type n)</div><div class="ttdef"><b>Definition:</b> Allocator.h:168</div></div>
-<div class="ttc" id="classAllocator_html_af156a6a50a8c62c70e40cf342a3b64cb"><div class="ttname"><a href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">Allocator::destroy</a></div><div class="ttdeci">void destroy(pointer p)</div><div class="ttdef"><b>Definition:</b> Allocator.h:297</div></div>
+<div class="ttc" id="classAllocator_html_af156a6a50a8c62c70e40cf342a3b64cb"><div class="ttname"><a href="classAllocator.html#af156a6a50a8c62c70e40cf342a3b64cb">Allocator::destroy</a></div><div class="ttdeci">void destroy(pointer p)</div><div class="ttdef"><b>Definition:</b> Allocator.h:306</div></div>
 <div class="ttc" id="classAllocator_html_a4e2bf5fbf94e2206bb72b71ad4b7ffb3"><div class="ttname"><a href="classAllocator.html#a4e2bf5fbf94e2206bb72b71ad4b7ffb3">Allocator::Allocator</a></div><div class="ttdeci">Allocator()</div><div class="ttdef"><b>Definition:</b> Allocator.h:134</div></div>
 <div class="ttc" id="classAllocator_html_aaf1dbab9be62941817f98618f94c7146"><div class="ttname"><a href="classAllocator.html#aaf1dbab9be62941817f98618f94c7146">Allocator::deallocate</a></div><div class="ttdeci">void deallocate(pointer p, size_type t)</div><div class="ttdef"><b>Definition:</b> Allocator.h:245</div></div>
 <div class="ttc" id="classAllocator_html_a6e6a26ece248be1eb76ed691c085cd65"><div class="ttname"><a href="classAllocator.html#a6e6a26ece248be1eb76ed691c085cd65">Allocator::construct</a></div><div class="ttdeci">void construct(pointer p, const_reference v)</div><div class="ttdef"><b>Definition:</b> Allocator.h:228</div></div>
-<div class="ttc" id="classAllocator_html_a107cf1e09d9119f2819c0b5f6cdbe20b"><div class="ttname"><a href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">Allocator::operator[]</a></div><div class="ttdeci">const int &amp; operator[](int i) const </div><div class="ttdef"><b>Definition:</b> Allocator.h:308</div></div>
+<div class="ttc" id="classAllocator_html_a107cf1e09d9119f2819c0b5f6cdbe20b"><div class="ttname"><a href="classAllocator.html#a107cf1e09d9119f2819c0b5f6cdbe20b">Allocator::operator[]</a></div><div class="ttdeci">const int &amp; operator[](int i) const </div><div class="ttdef"><b>Definition:</b> Allocator.h:317</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 24 2016 21:16:20 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 24 2016 21:32:50 for My Project by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
