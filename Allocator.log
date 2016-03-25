@@ -1,3 +1,15 @@
+commit 520918f194f830b9bc327aa621d2eb353119bc33
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 21:42:33 2016 -0500
+
+    removed Doxyfile and commented more in Allocator.h
+
+commit eafacf115b79a6908fb9a537321c9fe71137b548
+Author: David Malone <dmalone7@cs.utexas.edu>
+Date:   Thu Mar 24 21:34:04 2016 -0500
+
+    created git log
+
 commit ae29318aaa0d2925f40c0ab88cebd9c1d63f935c
 Author: David Malone <dmalone7@cs.utexas.edu>
 Date:   Thu Mar 24 21:19:41 2016 -0500
